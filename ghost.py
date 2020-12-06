@@ -21,7 +21,7 @@ class Ghost:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
-        logger_fh = logging.FileHandler('ghost.log')
+        logger_fh = logging.FileHandler('log/ghost.log')
         logger_fh.setLevel(logging.WARNING)
         logger_fh.setFormatter(formatter)
 

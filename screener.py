@@ -12,7 +12,7 @@ class Screener:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
-        logger_fh = logging.FileHandler('screener_download.log')
+        logger_fh = logging.FileHandler('log/screener_download.log')
         logger_fh.setLevel(logging.WARNING)
         logger_fh.setFormatter(formatter)
 

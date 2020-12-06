@@ -18,7 +18,7 @@ class ExcelHandler:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
-        logger_fh = logging.FileHandler('excel_handler.log')
+        logger_fh = logging.FileHandler('log/excel_handler.log')
         logger_fh.setLevel(logging.WARNING)
         logger_fh.setFormatter(formatter)
 
