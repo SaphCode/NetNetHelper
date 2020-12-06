@@ -2,7 +2,7 @@ from selenium import webdriver
 from sys import platform
 import os
 
-def getDriver(headlessMode, proxy):
+def getDriver(headlessMode, proxy=False):
     chrome_options = webdriver.ChromeOptions()#chrome.options.Options()
     if proxy:
         desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy()
