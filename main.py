@@ -15,23 +15,21 @@ fullName = ghost.getFullName()
 firstName, lastName = fullName.split(' ')
 username = ghost.getUsername(fullName)
 password = "pantoffelheld"
+
+
+proxy = ghost.getProxy('http://screener.co/')
 ip = proxy[0]
 port = proxy[1]
 
 selenium_proxy = "{ip}:{port}".format(ip=ip, port=port)
-driver = getDriver(headlessMode=True, proxy=selenium_proxy)
+driver = getDriver(headlessMode=False, proxy=selenium_proxy)
 
-fullName = ghost.getFullName()
-firstName, lastName = fullName.split(' ')
-username = ghost.getUsername(fullName)
-email = ghost.getEmail()
-password = 'Iwanttohaveacat90'
-
-screener = Screener(driver)
-try:
-    screener.login(username, password)
-except:
-    screener.register(firstName, lastName, username, email, password)
+screener = Screener(driver, ghost)
+screener.register(firstName, lastName, username, email, password)
+#try:
+#    screener.login(username, password)
+#except:
+#    screener.register(firstName, lastName, username, email, password)
 screener.free_continue()
 screener.init_screen(driver)
 # time.sleep(3)
