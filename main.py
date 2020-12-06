@@ -7,11 +7,11 @@ import time
 from browser import getDriver
 
 
-'
+'''
 ghost = Ghost()
 #ghost.wait(Time.SMALL)
 #proxy = ghost.getProxy('http://10minutemail.com/'
-'''
+
 email = ghost.getEmail()
 
 
@@ -21,7 +21,7 @@ ip = proxy[0]
 port = proxy[1]
 
 selenium_proxy = "{ip}:{port}".format(ip=ip, port=port)
-'''
+
 driver = getDriver(headlessMode=False)# , proxy=selenium_proxy
 
 #fullName = ghost.getFullName()
@@ -67,12 +67,12 @@ screener.download(0)
 
 driver.close()
 time.sleep(5) #wait for download to finish
+'''
 
 
-
-working_directory = os.path.join(os.path.expanduser('~'), 'OneDrive/Documents/Programming/Stocks/NetNets')
+working_directory = 'D:/NetNetData_6-12-20'
 excel_handler = ExcelHandler(working_directory)
 files_parent, files = excel_handler.locate_excel()
 excel_handler.move_to_wd(files_parent, files)
-#excel_handler.join_data()
-#excel_handler.get_master_sheet()
+excel_handler.join_data()
+excel_handler.get_master_sheet()

@@ -18,7 +18,7 @@ class ExcelHandler:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
-        logger_fh = logging.FileHandler('log/excel_handler.log')
+        logger_fh = logging.FileHandler('log/lexcel_handler.log')
         logger_fh.setLevel(logging.WARNING)
         logger_fh.setFormatter(formatter)
 
@@ -109,7 +109,10 @@ class ExcelHandler:
             self.logger.info("Creating a master.csv file")
             df = pd.DataFrame(columns = keys)
             df.to_csv(master_csv_path)
-        master = pd.read_csv('{}/{}'.format(self.working_directory, 'master.csv')).set_index(keys)
+        master = pd.read_csv('{}/{}'.format(self.working_directory, 'master.csv'))#
+        print(master.columns)
+        master.set_index(keys, inplace = True)
+        #print(keys in master.columns)
 
         csvs = [file for file in os.listdir(self.working_directory) if file.startswith('data') and file.endswith('.csv')]
         for csv in csvs:
@@ -132,6 +135,7 @@ class ExcelHandler:
         for csv in csvs:
             os.remove('{parent}/{file}'.format(parent = self.working_directory, file = csv))
 
+        out.dropna(axis = 0, how = 'all', inplace = True)
         out.to_csv('{}/{}'.format(self.working_directory, 'out.csv'), index = False)
 
 
@@ -257,7 +261,6 @@ class ExcelHandler:
         for index, row in csv.iterrows():
             condition = ''
             deleted.append(False)
-            print(row[new_labels['Last Annual Filing']])
             if row[new_labels['AVG 10y EBT']] <= 0:
                 csv = csv.drop(index = index)
                 condition = 'Loss on AVG in last 10y'
@@ -286,7 +289,7 @@ class ExcelHandler:
                 csv = csv.drop(index = index)
                 condition = "3 of 5 years negative earnings"
                 deleted[-1] = True
-            elif relativedelta(datetime.today().strftime('%m-%d-%Y'), dparser.parse(row[new_labels['Last Annual Filing']])).years >= 2:
+            elif relativedelta(datetime.today(), dparser.parse(row[new_labels['Last Annual Filing']])).years >= 2:
                 csv = csv.drop(index = index)
                 condition = "Dark since at least 2 years"
                 deleted[-1] = True
