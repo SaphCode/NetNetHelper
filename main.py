@@ -1,14 +1,20 @@
 from screener import Screener
 from excel_handler import ExcelHandler
 from selenium import webdriver
+from ghost import Time, Ghost
 import os
 import time
 from browser import getDriver
 
 
-Ghost ghost = Ghost()
-proxy = ghost.getProxy()
-
+ghost = Ghost()
+#ghost.wait(Time.SMALL)
+#proxy = ghost.getProxy('http://10minutemail.com/')
+email = ghost.getEmail()
+fullName = ghost.getFullName()
+firstName, lastName = fullName.split(' ')
+username = ghost.getUsername(fullName)
+password = "pantoffelheld"
 ip = proxy[0]
 port = proxy[1]
 

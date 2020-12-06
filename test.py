@@ -5,6 +5,7 @@ from ghost import Time, Ghost
 from browser import getDriver
 from screener import Screener
 
+
 ghost = Ghost()
 #ghost.wait(Time.SMALL)
 #proxy = ghost.getProxy('http://10minutemail.com/')
