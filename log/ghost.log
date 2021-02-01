@@ -1,2 +1,5 @@
 2020-08-30 19:37:10,615 - ghost - ERROR - E:\Programming\My own Projects\NetNetHelper\ghost.py - 113: name 'driver' is not defined
 2020-08-30 19:39:28,518 - ghost - ERROR - E:\Programming\My own Projects\NetNetHelper\ghost.py - 113: name 'driver' is not defined
+2021-02-01 11:15:36,477 - ghost - ERROR - E:\Programming\My own Projects\NetNetHelper\ghost.py - 113: Message: no such element: Unable to locate element: {"method":"xpath","selector":"/html/body/div[1]/div/div[1]/div/button[2]"}
+  (Session info: chrome=88.0.4324.104)
+

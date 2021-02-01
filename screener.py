@@ -50,8 +50,8 @@ class Screener:
         self.send_keys(input, screen, Time.LONG)
         save_btn = '/html/body/div[3]/div/table/tbody/tr[2]/td[2]/div/div/div[3]'
         self.click(save_btn, Time.VERY_SMALL)
-        cancel_btn = '/html/body/div[3]/div/table/tbody/tr[2]/td[2]/div/div/div[2]'
-        self.click(cancel_btn, Time.VERY_SMALL)
+        #cancel_btn = '/html/body/div[3]/div/table/tbody/tr[2]/td[2]/div/div/div[2]'
+        #self.click(cancel_btn, Time.VERY_SMALL)
 
 
     def register(self, firstName, lastName, username, email, password):
@@ -87,14 +87,14 @@ class Screener:
 
         self.send_keys(username_prompt_xpath, username, Time.MEDIUM)
         self.send_keys(password_prompt_xpath, password, Time.SMALL)
-        self.click(submit_button_xpath, Time.VERY_SMALL)
+        self.click(submit_button_xpath, Time.SMALL)
 
         self.logger.info('Login successful!')
 
 
     def free_continue(self):
         continue_btn = '/html/body/div[4]/div/table/tbody/tr[2]/td[2]/div/div/div[2]/div'
-        self.click(continue_btn, Time.MEDIUM)
+        self.click(continue_btn, Time.LONG)
 
 
     def load_screen(self):
@@ -103,8 +103,7 @@ class Screener:
         xpath_folder = '/html/body/div[3]/div/table/tbody/tr[2]/td[2]/div/div/div[4]/div[3]/div/div/div/div/div[1]/div[6]'
         xpath_screen = '/html/body/div[3]/div/table/tbody/tr[2]/td[2]/div/div/div[4]/div[5]/div/div/div/div/div[1]/div[2]'
         xpath_loadScreenBtn = '/html/body/div[3]/div/table/tbody/tr[2]/td[2]/div/div/div[2]'
-        self.driver.find_element_by_xpath(xpath_screens).click()
-        self.click(xpath_screens, Time.SMALL)
+        self.click(xpath_screens, Time.MEDIUM)
         self.click(xpath_loadScreen, Time.VERY_SMALL)
         self.click(xpath_folder, Time.VERY_SMALL)
         self.click(xpath_screen, Time.SMALL)

@@ -1,10 +1,10 @@
 from enum import IntEnum
 class Time(IntEnum):
     VERY_SMALL = 1
-    SMALL = 4
-    MEDIUM = 6
-    LONG = 15
-    VERY_LONG = 60
+    SMALL = 2
+    MEDIUM = 3
+    LONG = 6
+    VERY_LONG = 20
 
 from time import sleep
 from random import gauss, randint
