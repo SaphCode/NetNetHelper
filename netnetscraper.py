@@ -1,10 +1,10 @@
-from screener import Screener
-from excel_handler import ExcelHandler
+from scraper.screener import Screener
+from datahandler.excel_handler import ExcelHandler
 from selenium import webdriver
-from ghost import Time, Ghost
+from scraper.ghost import Time, Ghost
 import os
 import time
-from browser import getDriver
+from scraper.browser import getDriver
 
 def login(screener, username, password):
     try:

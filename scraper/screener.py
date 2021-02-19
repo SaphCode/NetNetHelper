@@ -3,7 +3,7 @@ import logging
 import os
 import time
 import math
-from ghost import Time, Ghost
+from scraper.ghost import Time, Ghost
 
 class Screener:
 

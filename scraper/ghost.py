@@ -13,7 +13,7 @@ from proxyscrape import create_collector
 import names
 from selenium import webdriver
 from sys import platform
-from browser import getDriver
+from scraper.browser import getDriver
 import urllib.request , socket
 class Ghost:
     def __init__(self):
