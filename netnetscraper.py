@@ -41,40 +41,45 @@ def process_data(working_directory):
     excel_handler.join_data()
     excel_handler.get_master_sheet()
 
-key = input("Do you want to re-download all? (y/n)\n")
-while key != "y" and key != "n":
+def main():
+
     key = input("Do you want to re-download all? (y/n)\n")
+    while key != "y" and key != "n":
+        key = input("Do you want to re-download all? (y/n)\n")
 
-if key == "y":
+    if key == "y":
 
-    ghost = Ghost()
-    driver = getDriver(headlessMode=False)
-    screener = Screener(driver, ghost)
+        ghost = Ghost()
+        driver = getDriver(headlessMode=False)
+        screener = Screener(driver, ghost)
 
-    login(screener, "AntonEnton99", "psychoscheiß666")
+        login(screener, "AntonEnton99", "psychoscheiß666")
 
-    screener.init_screen(driver)
+        screener.init_screen(driver)
 
-    time.sleep(5)
+        time.sleep(5)
 
-    downloadEarnings(screener)
+        downloadEarnings(screener)
 
-    time.sleep(5)
+        time.sleep(5)
 
-    downloadBalanceSheet(screener)
+        downloadBalanceSheet(screener)
 
-    time.sleep(5)
+        time.sleep(5)
 
-    downloadDescriptive(screener)
+        downloadDescriptive(screener)
 
-    driver.close()
-    time.sleep(5) #wait for download to finish
+        driver.close()
+        time.sleep(5) #wait for download to finish
 
-key = "c"
-key = input("Do you want to process downloaded data right now? (y/n)\n")
-
-while key != "y" and key != "n":
+    key = "c"
     key = input("Do you want to process downloaded data right now? (y/n)\n")
 
-if key == "y":
-    process_data('E:/Programming/Data/Stocks/NetNets')
+    while key != "y" and key != "n":
+        key = input("Do you want to process downloaded data right now? (y/n)\n")
+
+    if key == "y":
+        process_data('E:/Programming/Data/Stocks/NetNets')
+
+if __name__ == '__main__':
+    main()
