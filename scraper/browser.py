@@ -2,7 +2,7 @@ from selenium import webdriver
 from sys import platform
 import os
 
-def getDriver(headlessMode, proxy=False):
+def getDriver(absPath, headlessMode, proxy=False):
     chrome_options = webdriver.ChromeOptions()#chrome.options.Options()
     if proxy:
         desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy()
@@ -18,7 +18,7 @@ def getDriver(headlessMode, proxy=False):
         #chrome_options.add_argument('--proxy-server={}'.format(proxy))
     if headlessMode:
         chrome_options.add_argument('headless')
-    path = 'driver/'
+    path = absPath + '/scraper/driver/'
     driver = None
     if platform == 'linux' or platform == 'linux2':
         path += 'chromedriver'
@@ -36,7 +36,7 @@ def getDriver(headlessMode, proxy=False):
         #path += 'geckodriver'
     else:
         path += 'chromedriver.exe'
-        driver = webdriver.Chrome(executable_path=os.path.abspath(path), options=chrome_options) #, options=chrome_options)
+        driver = webdriver.Chrome(path, options=chrome_options) #, options=chrome_options)
 
         driver.set_window_size(974, 1047)
         driver.set_window_position(953, 0)

@@ -49,8 +49,10 @@ def main():
 
     if key == "y":
 
+        DIRECTORY_OF_PROJECT = "E:/Programming/Projects/NetNetHelper"
+
         ghost = Ghost()
-        driver = getDriver(headlessMode=False)
+        driver = getDriver(DIRECTORY_OF_PROJECT, headlessMode=False)
         screener = Screener(driver, ghost)
 
         login(screener, "AntonEnton99", "psychoscheiß666")

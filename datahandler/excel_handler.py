@@ -10,6 +10,7 @@ import statistics
 import dateutil.parser as dparser
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from scraper.stockprice import *
 
 class ExcelHandler:
 
@@ -97,8 +98,6 @@ class ExcelHandler:
     def join_data(self):
         self.logger.info('Deleting output from previous run ..')
         keys = ['Symbol', 'Company Name']
-
-
 
         out_csv_path = '{parent}/{file}'.format(parent = self.working_directory, file = 'out.csv')
         if os.path.exists(out_csv_path):
@@ -221,7 +220,10 @@ class ExcelHandler:
         nopelist = dfs['Nopelist'].set_index(keys)
         not_sure_list = dfs['Not Sure List'].set_index(keys)
         not_possible_list = dfs['Not possible List']
-
+        too_expensive_df = dfs['Too Expensive'].set_index(keys) # TODO: new, test this
+        portfolio_df = dfs['Portfolio'].set_index(keys) # TODO: new, test this
+        print('-------------- TEST MODE -------------')
+        raise NotImplementedError()
         for index in master.index:
             # self.logger.debug('Checking index: {}'.format(index))
             if index in nopelist.index:
@@ -232,6 +234,34 @@ class ExcelHandler:
                 self.logger.info('Dropping index: {} because it is in Not Sure List.'.format(index))
                 master.drop(index, inplace=True)
                 continue
+            if index in too_expensive_df.index:
+                print('-------------- TEST MODE -------------')
+                row = too_expensive_df.loc[index]
+                expiry_year = datetime.strptime(row['expires'], '%Y')
+                year_today = datetime.today().year
+                raise NotImplementedError()
+                if (expiry_year > year_today):
+                    self.logger.info('Dropping index: {} because it is in Too Expensive.'.format(index))
+                    master.drop(index, inplace=True)
+                    continue
+                elif:
+                    mcap_then = row['mcap at day of entry']
+                    mcap_now = row['current mcap']
+                    if mcap_now.isnan():
+                        yfinance_ticker = convert_to_yticker(index[0])
+                        mcap_now = getPrice(yfinance_ticker, datetime.today())
+                    if (mcap_then * 0.8 >= mcap_now): # has NOT dropped by 20%
+                        self.logger.info('Dropping index: {} because it is in Too Expensive.'.format(index))
+                        master.drop(index, inplace=True)
+                        continue
+            if index in portfolio_df:
+                print('-------------- TEST MODE -------------')
+                raise NotImplementedError()
+                self.logger.info('Dropping index: {} because it is in Portfolio.'.format(index))
+                master.drop(index, inplace=True)
+                continue
+
+
             deleted = False
             for exchange in not_possible_list['Exchange']:
                 if not deleted:
