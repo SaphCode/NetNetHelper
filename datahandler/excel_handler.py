@@ -107,9 +107,8 @@ class ExcelHandler:
         if not os.path.exists(master_csv_path):
             self.logger.info("Creating a master.csv file")
             df = pd.DataFrame(columns = keys)
-            df.to_csv(master_csv_path)
+            df.to_csv(master_csv_path, index=False)
         master = pd.read_csv('{}/{}'.format(self.working_directory, 'master.csv'))#
-        print(master.columns)
         master.set_index(keys, inplace = True)
         #print(keys in master.columns)
 
@@ -218,46 +217,47 @@ class ExcelHandler:
         xl = pd.ExcelFile(r'{wd}/{file}'.format(wd = self.working_directory, file = 'TOP_SECRET.xlsx'))
         dfs = {sheet: xl.parse(sheet) for sheet in xl.sheet_names}
         nopelist = dfs['Nopelist'].set_index(keys)
-        not_sure_list = dfs['Not Sure List'].set_index(keys)
+        too_complicated_df = dfs['Too Complicated'].set_index(keys)
         not_possible_list = dfs['Not possible List']
         too_expensive_df = dfs['Too Expensive'].set_index(keys) # TODO: new, test this
         portfolio_df = dfs['Portfolio'].set_index(keys) # TODO: new, test this
-        print('-------------- TEST MODE -------------')
-        raise NotImplementedError()
+        intrinsic_df = dfs['Intrinsic Value'].set_index(keys)
         for index in master.index:
             # self.logger.debug('Checking index: {}'.format(index))
             if index in nopelist.index:
                 self.logger.info('Dropping index: {} because it is in Nopelist'.format(index))
                 master.drop(index, inplace=True)
                 continue
-            if index in not_sure_list.index:
-                self.logger.info('Dropping index: {} because it is in Not Sure List.'.format(index))
+            if index in too_complicated_df.index:
+                self.logger.info('Dropping index: {} because it is in Too Complicated.'.format(index))
                 master.drop(index, inplace=True)
                 continue
             if index in too_expensive_df.index:
-                print('-------------- TEST MODE -------------')
                 row = too_expensive_df.loc[index]
-                expiry_year = datetime.strptime(row['expires'], '%Y')
-                year_today = datetime.today().year
-                raise NotImplementedError()
-                if (expiry_year > year_today):
+                expiry_year = datetime.strptime("3000", "%Y")
+                if not row['expires'].isna().any():
+                    expiry_year = datetime.strptime(str(int(row['expires'][0])), '%Y')
+                today = datetime.today()
+                if (expiry_year > today):
                     self.logger.info('Dropping index: {} because it is in Too Expensive.'.format(index))
                     master.drop(index, inplace=True)
                     continue
-                elif:
+                else:
                     mcap_then = row['mcap at day of entry']
                     mcap_now = row['current mcap']
-                    if mcap_now.isnan():
+                    if mcap_now.isna().any():
                         yfinance_ticker = convert_to_yticker(index[0])
                         mcap_now = getPrice(yfinance_ticker, datetime.today())
                     if (mcap_then * 0.8 >= mcap_now): # has NOT dropped by 20%
                         self.logger.info('Dropping index: {} because it is in Too Expensive.'.format(index))
                         master.drop(index, inplace=True)
                         continue
-            if index in portfolio_df:
-                print('-------------- TEST MODE -------------')
-                raise NotImplementedError()
+            if index in portfolio_df.index:
                 self.logger.info('Dropping index: {} because it is in Portfolio.'.format(index))
+                master.drop(index, inplace=True)
+                continue
+            if index in intrinsic_df.index:
+                self.logger.info('Dropping index: {} because it is in Intrinsic Value.'.format(index))
                 master.drop(index, inplace=True)
                 continue
 

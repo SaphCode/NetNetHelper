@@ -5,7 +5,7 @@ import time
 import math
 from scraper.ghost import Time, Ghost
 
-class Screener:
+class NetNetScreener:
 
     def __init__(self, driver, ghost):
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(pathname)s - %(lineno)d: %(message)s')

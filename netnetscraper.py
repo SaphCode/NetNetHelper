@@ -1,4 +1,4 @@
-from scraper.screener import Screener
+from scraper.netnetscreener import NetNetScreener
 from datahandler.excel_handler import ExcelHandler
 from selenium import webdriver
 from scraper.ghost import Time, Ghost
@@ -53,9 +53,9 @@ def main():
 
         ghost = Ghost()
         driver = getDriver(DIRECTORY_OF_PROJECT, headlessMode=False)
-        screener = Screener(driver, ghost)
+        screener = NetNetScreener(driver, ghost)
 
-        login(screener, "AntonEnton99", "psychoscheiß666")
+        login(screener, "macmiller77", "BurgerMacKing55")
 
         screener.init_screen(driver)
 
