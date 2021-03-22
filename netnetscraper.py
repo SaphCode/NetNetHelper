@@ -7,13 +7,6 @@ import time
 from scraper.browser import getDriver
 from datahandler.labels import Labels
 
-def login(screener, username, password):
-    try:
-        screener.login(username, password)
-    except:
-        screener.register(firstName, lastName, username, email, password)
-    screener.free_continue()
-
 def downloadEarnings(screener):
     screener.delete_all_columns()
     time.sleep(2)
@@ -78,24 +71,17 @@ def main():
         driver = getDriver(DIRECTORY_OF_PROJECT, headlessMode=False)
         screener = NetNetScreener(driver, ghost)
 
-        login(screener, "macmiller77", "BurgerMacKing55")
-
-        screener.init_screen(driver)
-
+        screener.login("macmiller77", "BurgerMacKing55")
+        screener.screen()
         time.sleep(5)
-
         downloadEarnings(screener)
-
         time.sleep(5)
-
         downloadBalanceSheet(screener)
-
         time.sleep(5)
-
         downloadDescriptive(screener)
-
+        time.sleep(5)
         driver.close()
-        time.sleep(5) #wait for download to finish
+
 
     key = "c"
     key = input("Do you want to process downloaded data right now? (y/n)\n")
