@@ -11,6 +11,7 @@ import dateutil.parser as dparser
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from scraper.stockprice import *
+from .labels import Labels
 
 class ExcelHandler:
 
@@ -35,45 +36,6 @@ class ExcelHandler:
         else:
             logging.error('Directory {} does not exist.'.format(working_directory))
             raise Exception('Directory {} does not exist.'.format(working_directory))
-
-        self.column_labels = ['Symbol', 'Company Name', 'Cash and Equiv.-most recent quarter',
-                                'Assets, current-most recent quarter', 'Liabilities, current-most recent quarter',
-                                'Inventory-most recent quarter', 'Receivables-most recent quarter',
-                                'Assets, total-most recent quarter', 'Book value (tangible) in dollars-most recent quarter',
-                                 'Liabilities, total-most recent quarter', 'Shareholder Equity-most recent quarter',
-                                 'Market capitalization', 'Exchange Rate From Price to Financial Reporting Currency',
-                                 'Exchange Rate From Financial Reporting Currency to USD', 'Net Income Before Taxes(A)',
-                                 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)',
-                                 'Net Income Before Taxes(A-3)', 'Net Income Before Taxes(A-4)',
-                                 'Net Income Before Taxes(A-5)', 'Net Income Before Taxes(A-6)',
-                                 'Net Income Before Taxes(A-7)', 'Net Income Before Taxes(A-8)',
-                                 'Net Income Before Taxes(A-9)',
-                                 ]
-
-        self.new_labels = {
-            'Symbol':'Symbol',
-            'Company Name':'Company Name',
-            'Market/NCAV':'Market/NCAV',
-            'NCAV':'NCAV',
-            'Market Cap':'Market Cap',
-            'AVG 10y EBT':'AVG 10y EBT',
-            'Total Assets':'Total Assets',
-            'Total Liabilities':'Total Liabilities',
-            'Cash & Equivalents':'Cash & Equivalents',
-            'Receivables':'Receivables',
-            'Inventory':'Inventory',
-            '10y Earnings Yield':'10y Earnings Yield',
-            'Earnings Trend':'Earnings Trend',
-            '3y AVG EBT':'3y AVG EBT',
-            'Median EBT 5y':'Median EBT 5y',
-            'EBT A-5':'EBT A-5',
-            'EBT A-6':'EBT A-6',
-            'EBT A-7':'EBT A-7',
-            'EBT A-8':'EBT A-8',
-            'EBT A-9':'EBT A-9',
-            'Median EBT 10y':'Median EBT 10y',
-            'Last Annual Filing':'Last Annual Filing',
-        }
 
         self.main_csv = self.working_directory + '/' + 'NetNets.csv'
 
@@ -171,7 +133,6 @@ class ExcelHandler:
 
 
     def get_master_sheet(self):
-        new_labels = self.new_labels
         out_filepath = '{parent}/{file}'.format(parent = self.working_directory, file = 'out.csv')
         keys = ['Symbol', 'Company Name']
         if not os.path.exists(out_filepath):
@@ -180,39 +141,38 @@ class ExcelHandler:
             df = pd.DataFrame(columns = keys)
             df.to_csv(out_filepath)
         out = pd.read_csv('{parent}/{file}'.format(parent = self.working_directory, file = 'out.csv'))
-        master = pd.DataFrame(columns = self.new_labels)
-        master[new_labels['Symbol']] = out['Symbol']
-        master[new_labels['Company Name']] = out['Company Name']
-        master[new_labels['Market Cap']] = out['Market capitalization']*out['Exchange Rate From Price to Financial Reporting Currency']*out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['Cash & Equivalents']] = out['Cash and Equiv.-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['Receivables']] = out['Receivables-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['Inventory']] = out['Inventory-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['Total Liabilities']] = out['Liabilities, total-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['NCAV']] = master[new_labels['Cash & Equivalents']] + 0.75 * master[new_labels['Receivables']] + 0.5 * master[new_labels['Inventory']] - master[new_labels['Total Liabilities']]
-        master[new_labels['Market/NCAV']] = master['Market Cap']/master[new_labels['NCAV']]
-        master[new_labels['AVG 10y EBT']] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)',
+        master = pd.DataFrame()
+        master[Labels.symbol] = out['Symbol']
+        master[Labels.name] = out['Company Name']
+        master[Labels.mcap] = out['Market capitalization']*out['Exchange Rate From Price to Financial Reporting Currency']*out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.cash] = out['Cash and Equiv.-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.receivables] = out['Receivables-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.inventory] = out['Inventory-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.total_liabilities] = out['Liabilities, total-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.ncav] = master[Labels.cash] + 0.75 * master[Labels.receivables] + 0.5 * master[Labels.inventory] - master[Labels.total_liabilities]
+        master[Labels.mcap_to_ncav] = master[Labels.mcap]/master[Labels.ncav]
+        master[Labels.avg_10y_ebt] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)',
                                             'Net Income Before Taxes(A-3)', 'Net Income Before Taxes(A-4)', 'Net Income Before Taxes(A-5)',
                                             'Net Income Before Taxes(A-6)', 'Net Income Before Taxes(A-7)', 'Net Income Before Taxes(A-8)',
                                             'Net Income Before Taxes(A-9)']].mean(axis = 1, skipna = True) * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['Total Assets']] = out['Assets, total-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['10y Earnings Yield']] = master[new_labels['AVG 10y EBT']]/master[new_labels['Market Cap']]
-        master[new_labels['3y AVG EBT']] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)']].mean(axis = 1, skipna=True)
-        master[new_labels['Earnings Trend']] = (1 - (master[new_labels['3y AVG EBT']]/master[new_labels['AVG 10y EBT']]))*-1
-        master[new_labels['Median EBT 5y']] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)',
+        master[Labels.total_assets] = out['Assets, total-most recent quarter']*out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.earnings_yield_10y] = master[Labels.avg_10y_ebt]/master[Labels.mcap]
+        master[Labels.avg_3y_ebt] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)']].mean(axis = 1, skipna=True)
+        master[Labels.med_5y_ebt] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)',
                                             'Net Income Before Taxes(A-2)', 'Net Income Before Taxes(A-3)',
                                             'Net Income Before Taxes(A-4)']].median(axis = 1, skipna = True) * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['EBT A-5']] = out['Net Income Before Taxes(A-5)'] * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['EBT A-6']] = out['Net Income Before Taxes(A-6)'] * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['EBT A-7']] = out['Net Income Before Taxes(A-7)'] * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['EBT A-8']] = out['Net Income Before Taxes(A-8)'] * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['EBT A-9']] = out['Net Income Before Taxes(A-9)'] * out['Exchange Rate From Financial Reporting Currency to USD']
-        master[new_labels['Median EBT 10y']] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)',
+        master[Labels.ebt_m5] = out['Net Income Before Taxes(A-5)'] * out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.ebt_m6] = out['Net Income Before Taxes(A-6)'] * out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.ebt_m7] = out['Net Income Before Taxes(A-7)'] * out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.ebt_m8] = out['Net Income Before Taxes(A-8)'] * out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.ebt_m9] = out['Net Income Before Taxes(A-9)'] * out['Exchange Rate From Financial Reporting Currency to USD']
+        master[Labels.med_10y_ebt] = out[['Net Income Before Taxes(A)', 'Net Income Before Taxes(A-1)', 'Net Income Before Taxes(A-2)',
                                              'Net Income Before Taxes(A-3)', 'Net Income Before Taxes(A-4)', 'Net Income Before Taxes(A-5)',
                                              'Net Income Before Taxes(A-6)', 'Net Income Before Taxes(A-7)', 'Net Income Before Taxes(A-8)',
                                              'Net Income Before Taxes(A-9)']].median(axis = 1, skipna = True)
-        master[new_labels['Last Annual Filing']] = out['Last Annual Filing']
+        master[Labels.last_annual_date] = out['Last Annual Filing']
         #master.to_csv('{parent}/{filename}'.format(parent = self.working_directory, filename = 'test.csv'))
-        master = master.set_index([new_labels['Symbol'], new_labels['Company Name']])
+        master = master.set_index([Labels.symbol, Labels.name])
 
         xl = pd.ExcelFile(r'{wd}/{file}'.format(wd = self.working_directory, file = 'TOP_SECRET.xlsx'))
         dfs = {sheet: xl.parse(sheet) for sheet in xl.sheet_names}
@@ -271,76 +231,4 @@ class ExcelHandler:
                             master.drop(index, inplace=True)
                             deleted = True
 
-        master = self.get_sorted_master(master)
-        master.to_csv('{parent}/{filename}'.format(parent = self.working_directory, filename = 'netnets.csv'))
-
-
-    def get_sorted_master(self, csv):
-        reduced_df = self.drop_unpromising(csv)
-        reduced_df['Score'] = self.calculate_score(reduced_df)
-        sorted_df = reduced_df.sort_values(by=['Score'], ascending = False)
-        self.logger.info('Sorted data by score.')
-        return sorted_df
-
-
-    def drop_unpromising(self, csv):
-        new_labels = self.new_labels
-        score = 0
-        deleted = []
-        nrows = len(csv.index)
-        for index, row in csv.iterrows():
-            condition = ''
-            deleted.append(False)
-            if row[new_labels['AVG 10y EBT']] <= 0:
-                csv = csv.drop(index = index)
-                condition = 'Loss on AVG in last 10y'
-                deleted[-1] = True
-            #wenn earnings yield größer als 1000%
-            elif ( row[new_labels['3y AVG EBT']] / row[new_labels['Market Cap']] ) > 10:
-                csv = csv.drop(index = index)
-                condition = "Earnings Yield > 1000%"
-                deleted[-1] = True
-            #wenn inventory mehr als 85% von ncav ist
-            elif (row[new_labels['NCAV']] + row[new_labels['Total Liabilities']])* 0.85 <= row[new_labels['Inventory']]:
-                csv = csv.drop(index = index)
-                condition = "Inventory > 85%"
-                deleted[-1] = True
-            #wenn receivables mehr als 85% von ncav ist
-            elif (row[new_labels['NCAV']] + row[new_labels['Total Liabilities']]) * 0.95 <= row[new_labels['Receivables']]:
-                csv = csv.drop(index = index)
-                condition = "Receivables > 95%"
-                deleted[-1] = True
-            #wenn die earnings unreasonable nach oben gegangen sind
-            elif row[new_labels['3y AVG EBT']] > (row[new_labels['AVG 10y EBT']] * 15):
-                csv = csv.drop(index = index)
-                condition = "Earnings Trend is death"
-                deleted[-1] = True
-            elif row[new_labels['Median EBT 5y']] <= 0:
-                csv = csv.drop(index = index)
-                condition = "3 of 5 years negative earnings"
-                deleted[-1] = True
-            elif relativedelta(datetime.today(), dparser.parse(row[new_labels['Last Annual Filing']])).years >= 2:
-                csv = csv.drop(index = index)
-                condition = "Dark since at least 2 years"
-                deleted[-1] = True
-            if deleted[-1] == True:
-                self.logger.info('Deleted {index}, because {condition}'.format(index = index, condition = condition))
-            '''
-            #wenns kein netnet ist, warum auch immer
-            elif row[new_labels['NCAV']] < row[new_labels['Market Cap']]:
-                csv = csv.drop(index = index)
-                condition = "ALARM DIESE CONDITION SOLLTE NICHT AUFTRETEN GROSSER ALARM ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-            '''
-        self.logger.info('Deleted {sum} ({percentage}%) companies.'.format(sum = sum(deleted), percentage = int(round(sum(deleted)*100/nrows, 0))))
-        return csv
-
-
-    def calculate_score(self, df):
-        new_labels = self.new_labels
-        self.logger.info('Calculating score.')
-        score = 1-df[new_labels['Market/NCAV']]
-        score += df[new_labels['10y Earnings Yield']]
-        score += df[new_labels['Cash & Equivalents']]/df[new_labels['NCAV']]
-        score += (df[new_labels['NCAV']] + df[new_labels['Total Liabilities']])/df[new_labels['Total Assets']]
-        self.logger.info('Calculated score.')
-        return score
+        return master
