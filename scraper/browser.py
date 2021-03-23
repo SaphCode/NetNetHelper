@@ -2,7 +2,7 @@ from selenium import webdriver
 from sys import platform
 import os
 
-def getDriver(absPath, headlessMode, proxy=False):
+def getDriver(headlessMode, proxy=False):
     chrome_options = webdriver.ChromeOptions()#chrome.options.Options()
     if proxy:
         desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy()
@@ -18,7 +18,7 @@ def getDriver(absPath, headlessMode, proxy=False):
         #chrome_options.add_argument('--proxy-server={}'.format(proxy))
     if headlessMode:
         chrome_options.add_argument('headless')
-    path = absPath + '/scraper/driver/'
+    path = 'scraper/driver/'
     driver = None
     if platform == 'linux' or platform == 'linux2':
         path += 'chromedriver'

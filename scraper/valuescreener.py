@@ -2,17 +2,16 @@ import datetime
 from .screener import Screener
 from .ghost import Time
 
-class SmallCapScreener(Screener):
+class ValueScreener(Screener):
 
     def __init__(self, driver, ghost):
         super().__init__(driver, ghost)
 
     def screen(self):
         screen = [
-            f'Market Capitalization < {10**6}',
-            f'Volume-avg. trading volume for the last 3 months > 0',
-            #f'Last annual filing >= {critical_date.strftime("%m/%d/%Y")}',
-            'Current ratio-most recent quarter > 1.5'
+            # ROIC >= 20% last 5 years
+            # Wenig debt
+            #
         ]
 
         for condition in screen:

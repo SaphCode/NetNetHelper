@@ -55,6 +55,36 @@ class Screener(ABC):
         self.menu_filing_info = '/html/body/div[4]/div/table/tbody/tr[2]/td[2]/div/div/table/tbody/tr[4]/td[1]'
         self.info_last_annual_filing = '/html/body/div[5]/div/table/tbody/tr[2]/td[2]/div/div/table/tbody/tr[2]/td'
 
+    @abstractmethod
+    def getData(self):
+        """Formats the desired data and downloads it. Implement this yourself."""
+        pass
+
+
+    def downloadEarnings(self):
+        time.sleep(3)
+        self.delete_all_columns()
+        time.sleep(2)
+        self.format_EBT()
+        time.sleep(2)
+        self.download(0)
+
+    def downloadBalanceSheet(self):
+        time.sleep(3)
+        self.delete_all_columns()
+        time.sleep(2)
+        self.format_balance_sheet()
+        time.sleep(2)
+        self.download(0)
+
+    def downloadDescriptive(self):
+        time.sleep(3)
+        self.delete_all_columns()
+        time.sleep(2)
+        self.format_descriptive()
+        time.sleep(2)
+        self.download(0)
+
 
     # NOT USED CURRENTLY
     def register(self, firstName, lastName, username, email, password):

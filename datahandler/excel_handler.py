@@ -13,6 +13,8 @@ from datetime import datetime
 from scraper.stockprice import *
 from .labels import Labels
 
+from pathlib import Path
+
 class ExcelHandler:
 
     def __init__(self, working_directory):
@@ -39,6 +41,16 @@ class ExcelHandler:
 
         self.main_csv = self.working_directory + '/' + 'NetNets.csv'
 
+
+    def handle(self):
+        """Handles the locating of downloaded files and joining them."""
+        files_parent, files = self.locate_excel()
+        self.move_to_wd(files_parent, files)
+        self.join_data()
+        master = self.get_master_sheet()
+        return master
+
+
     def locate_excel(self):
         downloads_guid = '{374DE290-123F-4565-9164-39C4925E467B}'
         path = self.__get_path(downloads_guid)
@@ -47,6 +59,7 @@ class ExcelHandler:
         self.logger.info('Found files:\n {}'.format(files))
 
         return path, files
+
 
     def move_to_wd(self, parent_directory, files):
         destination = self.working_directory
@@ -174,7 +187,9 @@ class ExcelHandler:
         #master.to_csv('{parent}/{filename}'.format(parent = self.working_directory, filename = 'test.csv'))
         master = master.set_index([Labels.symbol, Labels.name])
 
-        xl = pd.ExcelFile(r'{wd}/{file}'.format(wd = self.working_directory, file = 'TOP_SECRET.xlsx'))
+        wd_path = Path(self.working_directory)
+        parent_dir = wd_path.parent.absolute()
+        xl = pd.ExcelFile(f'{parent_dir}/TOP_SECRET.xlsx')
         dfs = {sheet: xl.parse(sheet) for sheet in xl.sheet_names}
         nopelist = dfs['Nopelist'].set_index(keys)
         too_complicated_df = dfs['Too Complicated'].set_index(keys)

@@ -14,3 +14,8 @@ class NetNetScreener(Screener):
         self.click(self.btn_save_free_form_condition, Time.VERY_SMALL)
 
         self.exclude_dark()
+
+    def getData(self):
+        self.downloadEarnings()
+        self.downloadBalanceSheet()
+        self.downloadDescriptive()
