@@ -2,6 +2,16 @@ from yahoofinancials import YahooFinancials
 from datetime import date, timedelta
 
 def convert_to_yticker(ticker):
+    exchange_dict = {
+        'HKG': '.HK',
+        'SIN': '.SI',
+        'TYO': '.T',
+        'SWF': '.SW',
+        'STO': '.ST',
+        'CVE': '.V',
+        'NASD': '',
+        'OTC': ''
+    }
     y_ticker = ticker.split(':')[1] + exchange_dict[ticker.split(':')[0]]
     if ('.HK' in y_ticker):
         y_ticker = y_ticker.zfill(7)
