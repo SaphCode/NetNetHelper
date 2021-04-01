@@ -9,7 +9,7 @@ class SmallCapScreener(Screener):
 
     def screen(self):
         screen = [
-            f'Market Capitalization < {10**6}',
+            f'Market Capitalization < {5*10**6}',
             f'Volume-avg. trading volume for the last 3 months > 0',
             #f'Last annual filing >= {critical_date.strftime("%m/%d/%Y")}',
             'Current ratio-most recent quarter > 1.5'

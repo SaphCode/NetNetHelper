@@ -2,8 +2,10 @@ import configparser
 
 from scraper.netnetscreener import NetNetScreener
 from scraper.smallcapscreener import SmallCapScreener
+from scraper.valuescreener import ValueScreener
 from scraper.netnetanalyst import NetNetAnalyst
 from scraper.smallcapanalyst import SmallCapAnalyst
+from scraper.valueanalyst import ValueAnalyst
 
 from scraper.ghost import Ghost
 from scraper.browser import getDriver

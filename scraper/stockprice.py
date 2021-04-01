@@ -1,17 +1,18 @@
 from yahoofinancials import YahooFinancials
 from datetime import date, timedelta
 
+exchange_dict = {
+    'HKG': '.HK',
+    'SIN': '.SI',
+    'TYO': '.T',
+    'SWF': '.SW',
+    'STO': '.ST',
+    'CVE': '.V',
+    'NASD': '',
+    'OTC': ''
+}
+
 def convert_to_yticker(ticker):
-    exchange_dict = {
-        'HKG': '.HK',
-        'SIN': '.SI',
-        'TYO': '.T',
-        'SWF': '.SW',
-        'STO': '.ST',
-        'CVE': '.V',
-        'NASD': '',
-        'OTC': ''
-    }
     y_ticker = ticker.split(':')[1] + exchange_dict[ticker.split(':')[0]]
     if ('.HK' in y_ticker):
         y_ticker = y_ticker.zfill(7)
@@ -28,5 +29,10 @@ def getPrice(ticker, wanted_date):
         adj_close = price_data['adjclose']
         price = adj_close
     except:
-        print(f'Ticker {t} not found, using default price 0.')
+        key = "undefined"
+        while key != "y" and key != "n":
+            key = input(f"Ticker {ticker} not found, using default price 0.\n The exchange dict used is {exchange_dict}.\nMaybe the exchange is not listed here, so we can't find it on YahooFinancials.\n Do you want to continue? (y/n)")
+        if key == "n":
+            print("Please fix me now")
+            raise Exception()
     return price

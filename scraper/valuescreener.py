@@ -9,9 +9,8 @@ class ValueScreener(Screener):
 
     def screen(self):
         screen = [
-            # ROIC >= 20% last 5 years
-            # Wenig debt
-            #
+            "Total debt/total equity-most recent quarter <= 0.5",
+            "Return on investment-5 year average >= 0.2"
         ]
 
         for condition in screen:
@@ -22,6 +21,4 @@ class ValueScreener(Screener):
         self.exclude_dark()
 
     def getData(self):
-        self.downloadEarnings()
-        self.downloadBalanceSheet()
         self.downloadDescriptive()

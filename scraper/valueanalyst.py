@@ -8,4 +8,6 @@ class ValueAnalyst(Analyst):
         self.drop_conditions = []
 
     def calculate_score(self):
-        super().calculate_score(self.df)
+        score = self.df[Labels.mcap]
+        print('Calculated score.')
+        return score

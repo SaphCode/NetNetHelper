@@ -21,4 +21,4 @@ class Analyst(ABC):
             self.df.drop(self.df.loc[condition].index, inplace = True)
         self.df['Score'] = self.calculate_score()
         self.df = self.df.sort_values(by='Score', ascending = False)
-        self.df.to_csv('{parent}/{filename}'.format(parent = working_directory, filename = filename))
+        self.df.to_csv('{parent}/{filename}.csv'.format(parent = working_directory, filename = filename))

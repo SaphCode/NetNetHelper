@@ -209,21 +209,21 @@ class ExcelHandler:
                 continue
             if index in too_expensive_df.index:
                 row = too_expensive_df.loc[index]
-                expiry_year = datetime.strptime("3000", "%Y")
-                if not row['expires'].isna().any():
-                    expiry_year = datetime.strptime(str(int(row['expires'][0])), '%Y')
-                today = datetime.today()
-                if (expiry_year > today):
+                mcap_then = row['mcap at day of entry']
+                mcap_now = row['current mcap']
+                if pd.isna(mcap_now):
+                    yfinance_ticker = convert_to_yticker(index[0])
+                    mcap_now = getPrice(yfinance_ticker, datetime.today())
+                if (mcap_then * 0.8 < mcap_now): # has NOT dropped by 20%
                     self.logger.info('Dropping index: {} because it is in Too Expensive.'.format(index))
                     master.drop(index, inplace=True)
                     continue
                 else:
-                    mcap_then = row['mcap at day of entry']
-                    mcap_now = row['current mcap']
-                    if mcap_now.isna().any():
-                        yfinance_ticker = convert_to_yticker(index[0])
-                        mcap_now = getPrice(yfinance_ticker, datetime.today())
-                    if (mcap_then * 0.8 >= mcap_now): # has NOT dropped by 20%
+                    expiry_year = datetime.strptime("3000", "%Y")
+                    if not pd.isna(row['expires']):
+                        expiry_year = datetime.strptime(str(int(row['expires'])), '%Y')
+                    today = datetime.today()
+                    if (expiry_year > today):
                         self.logger.info('Dropping index: {} because it is in Too Expensive.'.format(index))
                         master.drop(index, inplace=True)
                         continue
